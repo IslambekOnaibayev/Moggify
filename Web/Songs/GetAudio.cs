@@ -34,7 +34,7 @@ namespace Web.Songs
 
             var file = TypedResults.File(
                 result.Value,
-                contentType: "audio/wav",
+                contentType: "audio/ogg",
                 enableRangeProcessing: true,
                 entityTag: new EntityTagHeaderValue($"\"{seed}-{index}\""));
 

@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <PackageReference Include="Bogus" />
+    <PackageReference Include="Concentus" />
+    <PackageReference Include="Concentus.OggFile" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" />
     <PackageReference Include="Melanchall.DryWetMidi" />
     <PackageReference Include="NimblePros.Metronome" />

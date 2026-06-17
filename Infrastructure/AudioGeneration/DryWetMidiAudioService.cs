@@ -6,7 +6,7 @@ namespace Infrastructure.AudioGeneration
         {
             var song = MusicComposer.Compose(userSeed, globalIndex);
             var samples = AudioRenderer.Render(song);
-            return WavEncoder.Encode(samples, song.SampleRate);
+            return OggOpusEncoder.Encode(samples, song.SampleRate);
         }
     }
 }
