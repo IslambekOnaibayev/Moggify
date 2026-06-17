@@ -1,6 +1,7 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { Song, SongDetails, ViewMode } from '../models/song.model';
 import { SongApiService } from '../../infrastructure/api/song-api.service';
+import { AudioPreloadService } from '../services/audio-preload.service';
 
 export const TABLE_PAGE_SIZE = 10;
 export const GALLERY_BATCH_SIZE = 20;
@@ -8,6 +9,7 @@ export const GALLERY_BATCH_SIZE = 20;
 @Injectable({ providedIn: 'root' })
 export class SongStore {
   private api = inject(SongApiService);
+  private preload = inject(AudioPreloadService);
 
   readonly locale = signal<string>('en-US');
   readonly seed = signal<number>(Math.floor(Math.random() * 99999999));
@@ -98,6 +100,7 @@ export class SongStore {
           this.gallerySongs.update((prev) => [...prev, ...result.items]);
           this.galleryHasMore.set(result.items.length === GALLERY_BATCH_SIZE);
           this.galleryLoading.set(false);
+          this.preload.preload(result.items.map(s => this.api.getAudioUrl(this.seed(), s.index)));
         },
         error: () => this.galleryLoading.set(false),
       });
@@ -174,6 +177,7 @@ export class SongStore {
         if (reqId !== this.tableReqId) return;
         this.tableSongs.set(r.items);
         this.tableLoading.set(false);
+        this.preload.preload(r.items.map(s => this.api.getAudioUrl(seed, s.index)));
       },
       error: () => { if (reqId === this.tableReqId) this.tableLoading.set(false); },
     });

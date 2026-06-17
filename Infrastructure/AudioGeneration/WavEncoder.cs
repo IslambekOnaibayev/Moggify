@@ -2,7 +2,7 @@ namespace Infrastructure.AudioGeneration
 {
     internal static class WavEncoder
     {
-        private const short Channels = 2;
+        private const short Channels = 1;
         private const short BitsPerSample = 16;
 
         public static byte[] Encode(float[] monoSamples, int sampleRate)
@@ -31,7 +31,6 @@ namespace Infrastructure.AudioGeneration
             {
                 var clamped = Math.Clamp(sample, -1f, 1f);
                 var pcm = (short)(clamped * short.MaxValue);
-                writer.Write(pcm);
                 writer.Write(pcm);
             }
 
