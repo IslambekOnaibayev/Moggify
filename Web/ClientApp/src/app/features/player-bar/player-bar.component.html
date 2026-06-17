@@ -20,7 +20,11 @@
           <mat-icon>skip_previous</mat-icon>
         </button>
         <button mat-fab class="play" (click)="player.togglePlay()">
-          <mat-icon>{{ player.isPlaying() ? 'pause' : 'play_arrow' }}</mat-icon>
+          @if (player.isLoading()) {
+            <mat-progress-spinner diameter="22" mode="indeterminate" class="play-spinner" />
+          } @else {
+            <mat-icon>{{ player.isPlaying() ? 'pause' : 'play_arrow' }}</mat-icon>
+          }
         </button>
         <button mat-icon-button (click)="player.next()" matTooltip="Next">
           <mat-icon>skip_next</mat-icon>

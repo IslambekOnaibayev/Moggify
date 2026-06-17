@@ -89,6 +89,7 @@
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
 
     mat-icon { font-size: 26px; width: 26px; height: 26px; }
+    mat-progress-spinner { --mdc-circular-progress-active-indicator-color: #fff; }
     &.active { opacity: 1; transform: translateY(0); }
   }
 }

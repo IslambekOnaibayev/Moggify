@@ -88,6 +88,13 @@
 .is-playing .col-index .index-num { opacity: 0; }
 .is-playing .col-index .row-play { display: flex; }
 
+.row-spinner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  --mdc-circular-progress-active-indicator-color: var(--moggify-red);
+}
+
 .chevron {
   color: var(--moggify-text-dim);
   transition: transform 0.2s ease, color 0.2s ease;

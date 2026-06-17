@@ -19,6 +19,7 @@ export class PlayerStore {
   readonly currentSeed = signal<number>(0);
 
   readonly isPlaying = signal(false);
+  readonly isLoading = signal(false);
   readonly progress = signal(0);
   readonly duration = signal(0);
   readonly volume = signal(0.8);
@@ -72,6 +73,7 @@ export class PlayerStore {
     this.currentSeed.set(seed);
     this.progress.set(0);
     this.duration.set(0);
+    this.isLoading.set(true);
 
     this.teardown();
 
@@ -79,6 +81,7 @@ export class PlayerStore {
     a.preload = 'auto';
     a.loop = this.isRepeating();
     a.volume = 0;
+    a.addEventListener('canplay', () => this.isLoading.set(false));
     a.addEventListener('loadedmetadata', () => this.duration.set(a.duration || 0));
     a.addEventListener('durationchange', () => this.duration.set(a.duration || 0));
     a.addEventListener('ended', () => {
@@ -113,6 +116,7 @@ export class PlayerStore {
   close(): void {
     this.teardown();
     this.isPlaying.set(false);
+    this.isLoading.set(false);
     this.currentIndex.set(null);
     this.currentTitle.set('');
     this.currentArtist.set('');

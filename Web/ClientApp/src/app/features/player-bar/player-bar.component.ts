@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { PlayerStore } from '../../core/store/player.store';
@@ -9,7 +10,7 @@ import { CoverModalStore } from '../../core/store/cover-modal.store';
 @Component({
   selector: 'app-player-bar',
   standalone: true,
-  imports: [MatButtonModule, MatIconModule, MatSliderModule, MatTooltipModule],
+  imports: [MatButtonModule, MatIconModule, MatProgressSpinnerModule, MatSliderModule, MatTooltipModule],
   templateUrl: './player-bar.component.html',
   styleUrl: './player-bar.component.scss',
 })

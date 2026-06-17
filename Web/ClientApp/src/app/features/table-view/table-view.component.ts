@@ -45,7 +45,10 @@ export class TableViewComponent {
   toggle(song: Song) { this.store.toggleExpand(song.index); }
 
   isPlaying(song: Song) {
-    return this.player.isCurrent(song.index, this.store.seed()) && this.player.isPlaying();
+    return this.player.isCurrent(song.index, this.store.seed()) && this.player.isPlaying() && !this.player.isLoading();
+  }
+  isLoadingTrack(song: Song) {
+    return this.player.isCurrent(song.index, this.store.seed()) && this.player.isLoading();
   }
   playSong(song: Song, event: MouseEvent) {
     event.stopPropagation();

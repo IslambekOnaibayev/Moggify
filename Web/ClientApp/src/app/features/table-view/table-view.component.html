@@ -20,8 +20,11 @@
       <td mat-cell *matCellDef="let song" class="col-index">
         <span class="index-num">{{ song.index }}</span>
         <button class="row-play" (click)="playSong(song, $event)"
+                [class.row-play--loading]="isLoadingTrack(song)"
                 [attr.aria-label]="isPlaying(song) ? 'Pause' : 'Play'">
-          @if (isPlaying(song)) {
+          @if (isLoadingTrack(song)) {
+            <span class="row-spinner"><mat-spinner diameter="16"></mat-spinner></span>
+          } @else if (isPlaying(song)) {
             <span class="eq"><i></i><i></i><i></i></span>
           } @else {
             <mat-icon>play_arrow</mat-icon>

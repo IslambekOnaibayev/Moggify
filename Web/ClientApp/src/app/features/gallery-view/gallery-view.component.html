@@ -7,10 +7,14 @@
           <div class="cover-box">
             <img [src]="coverUrl(seed(), song.index, song.title, song.artist)"
                  [alt]="song.title" class="cover" (click)="openCover(song, $event)" />
-            <button class="play-overlay" [class.active]="isPlaying(song)"
+            <button class="play-overlay" [class.active]="isPlaying(song) || isLoadingTrack(song)"
                     (click)="playSong(song, $event)"
                     [attr.aria-label]="isPlaying(song) ? 'Pause' : 'Play'">
-              <mat-icon>{{ isPlaying(song) ? 'pause' : 'play_arrow' }}</mat-icon>
+              @if (isLoadingTrack(song)) {
+                <mat-progress-spinner diameter="22" mode="indeterminate" />
+              } @else {
+                <mat-icon>{{ isPlaying(song) ? 'pause' : 'play_arrow' }}</mat-icon>
+              }
             </button>
           </div>
           <div class="info">
