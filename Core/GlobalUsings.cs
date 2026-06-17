@@ -1,0 +1,13 @@
+global using Ardalis.GuardClauses;
+global using Ardalis.Result;
+global using Ardalis.SmartEnum;
+global using Ardalis.Specification;
+global using Core.Interfaces;
+global using Core.SongAggregate;
+global using Mediator;
+global using Vogen;
+global using NimblePros.SharedKernel;
+global using System;
+global using System.Collections.Generic;
+global using System.Text;
+global using Microsoft.Extensions.Localization;

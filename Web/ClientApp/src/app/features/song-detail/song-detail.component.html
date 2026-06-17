@@ -1,0 +1,63 @@
+@if (details) {
+<div class="detail">
+  <div class="cover-col">
+    <div class="cover-wrap" [class.playing]="isPlayingThis">
+      <img [src]="coverUrl" alt="cover" class="cover" (click)="openCover()" />
+      <button mat-fab class="cover-play" (click)="playThis(); $event.stopPropagation()"
+              [attr.aria-label]="isPlayingThis ? 'Pause' : 'Play'">
+        <mat-icon>{{ isPlayingThis ? 'pause' : 'play_arrow' }}</mat-icon>
+      </button>
+    </div>
+    <div class="cover-actions">
+      <button class="like-chip" [class.liked]="likes > 0" (click)="like()" matTooltip="Like (+1)">
+        <mat-icon>favorite</mat-icon>{{ likes }}
+      </button>
+      <a class="download-chip" [href]="audioUrl" [download]="downloadName" matTooltip="Download">
+        <mat-icon>download</mat-icon>
+      </a>
+    </div>
+  </div>
+
+  <div class="body">
+    <div class="head">
+      <div>
+        <h2 class="title">{{ details.title }}</h2>
+        <div class="meta">
+          <span><mat-icon>person</mat-icon>{{ details.artist }}</span>
+          <span class="dot">•</span>
+          <span><mat-icon>album</mat-icon>{{ details.album }}</span>
+          <span class="dot">•</span>
+          <span><mat-icon>sell</mat-icon>{{ details.genre }}</span>
+          <span class="dot">•</span>
+          <span>{{ details.label }}, {{ details.year }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="lyrics">
+      <p class="lyrics-head">Lyrics</p>
+      <div class="lyrics-mask" #lyricsContainer>
+        <div class="fade fade-top"></div>
+        <div class="fade fade-bottom"></div>
+        <div class="lyrics-scroll">
+          @for (line of displayLines; track line.idx) {
+            @if (line.gap) {
+              <div class="gap" [attr.data-idx]="line.idx"></div>
+            } @else {
+              <p [attr.data-idx]="line.idx" class="line {{ lineState(line) }}">
+                @if (lineState(line) === 'active') {
+                  @for (w of line.words; track $index) {
+                    <span class="word" [class.sung]="$index < sungWords(line)">{{ w }}</span>
+                  }
+                } @else {
+                  {{ line.text }}
+                }
+              </p>
+            }
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+}

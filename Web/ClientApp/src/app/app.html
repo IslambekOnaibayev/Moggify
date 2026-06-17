@@ -1,0 +1,11 @@
+<app-toolbar />
+<main>
+  @if (viewMode === 'table') {
+    <app-table-view />
+  }
+  @if (viewMode === 'gallery') {
+    <app-gallery-view />
+  }
+</main>
+<app-player-bar />
+<app-cover-modal />

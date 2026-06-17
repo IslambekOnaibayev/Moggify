@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="Core/Core.csproj" />
+    <Project Path="Infrastructure/Infrastructure.csproj" />
+    <Project Path="UseCases/UseCases.csproj" />
+    <Project Path="Web/Web.csproj" />
+  </Folder>
+</Solution>

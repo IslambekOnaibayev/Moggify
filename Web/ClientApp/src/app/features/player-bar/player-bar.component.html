@@ -1,0 +1,68 @@
+@if (player.hasTrack()) {
+<footer class="player-bar">
+  <div class="bar-inner">
+
+    <div class="now">
+      <img [src]="player.coverUrl()" alt="cover" class="thumb" (click)="openCover()" />
+      <div class="meta">
+        <span class="title">{{ player.currentTitle() }}</span>
+        <span class="artist">{{ player.currentArtist() }}</span>
+      </div>
+    </div>
+
+    <div class="center">
+      <div class="buttons">
+        <button mat-icon-button [class.on]="player.isShuffled()"
+                (click)="player.toggleShuffle()" matTooltip="Shuffle">
+          <mat-icon>shuffle</mat-icon>
+        </button>
+        <button mat-icon-button (click)="player.previous()" matTooltip="Previous">
+          <mat-icon>skip_previous</mat-icon>
+        </button>
+        <button mat-fab class="play" (click)="player.togglePlay()">
+          <mat-icon>{{ player.isPlaying() ? 'pause' : 'play_arrow' }}</mat-icon>
+        </button>
+        <button mat-icon-button (click)="player.next()" matTooltip="Next">
+          <mat-icon>skip_next</mat-icon>
+        </button>
+        <button mat-icon-button [class.on]="player.isRepeating()"
+                (click)="player.toggleRepeat()" matTooltip="Repeat">
+          <mat-icon>repeat</mat-icon>
+        </button>
+        <button mat-icon-button [class.on]="player.autoPlay()"
+                (click)="player.toggleAutoPlay()"
+                [matTooltip]="player.autoPlay() ? 'Autoplay on' : 'Autoplay off'">
+          <mat-icon>queue_music</mat-icon>
+        </button>
+      </div>
+
+      <div class="seek">
+        <span class="time">{{ formatTime(player.progress()) }}</span>
+        <mat-slider class="seek-slider" [min]="0" [max]="player.duration() || 1" step="0.1"
+                    [discrete]="true" [displayWith]="formatTime">
+          <input matSliderThumb
+                 [value]="player.progress()"
+                 (valueChange)="player.seekTo($event)" />
+        </mat-slider>
+        <span class="time dim">{{ formatTime(player.duration()) }}</span>
+      </div>
+    </div>
+
+    <div class="volume">
+      <mat-icon>volume_up</mat-icon>
+      <mat-slider class="vol-slider" [min]="0" [max]="1" step="0.05">
+        <input matSliderThumb [value]="player.volume()" (valueChange)="player.setVolume($event)" />
+      </mat-slider>
+      <a mat-icon-button class="download" [href]="player.audioUrl()" [download]="player.downloadName()"
+         matTooltip="Download" aria-label="Download">
+        <mat-icon>download</mat-icon>
+      </a>
+      <button mat-icon-button class="close-player" (click)="player.close()"
+              matTooltip="Close player" aria-label="Close player">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+  </div>
+</footer>
+}

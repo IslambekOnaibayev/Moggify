@@ -1,0 +1,63 @@
+<mat-toolbar class="topnav">
+  <a class="brand" href="/" aria-label="Moggify — home">
+    <img src="logo.svg" class="brand-logo" alt="Moggify" />
+    <span class="brand-name">Moggify</span>
+  </a>
+
+  <span class="spacer"></span>
+
+  <button mat-icon-button (click)="theme.toggle()"
+          [matTooltip]="theme.isDark() ? 'Light theme' : 'Dark theme'"
+          aria-label="Toggle theme">
+    <mat-icon>{{ theme.isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+  </button>
+</mat-toolbar>
+
+<div class="controls">
+  <mat-form-field appearance="outline" subscriptSizing="dynamic" class="field lang">
+    <mat-label>Language</mat-label>
+    <mat-select [ngModel]="store.locale()" (ngModelChange)="onLocale($event)">
+      <mat-select-trigger>
+        <span class="flag {{ currentLocale.flagClass }}"></span>{{ currentLocale.label }}
+      </mat-select-trigger>
+      @for (l of locales; track l.code) {
+        <mat-option [value]="l.code">
+          <span class="flag {{ l.flagClass }}"></span>{{ l.label }}
+        </mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" subscriptSizing="dynamic" class="field seed">
+    <mat-label>Seed</mat-label>
+    <input matInput type="number" [ngModel]="seedValue" (ngModelChange)="onSeed($event)" />
+    <button matSuffix mat-icon-button color="primary" (click)="onRandomSeed()"
+            matTooltip="Random seed" aria-label="Random seed">
+      <mat-icon>shuffle</mat-icon>
+    </button>
+  </mat-form-field>
+
+  <div class="field likes">
+    <div class="likes-head">
+      <span class="likes-label">Likes (avg. per song)</span>
+      <span class="likes-value">{{ likesValue }}</span>
+    </div>
+    <mat-slider min="0" max="10" step="0.1" discrete class="likes-slider">
+      <input matSliderThumb [value]="likesValue"
+             (valueChange)="onLikes($event)"
+             (dragEnd)="onLikesCommit($event.value)" />
+    </mat-slider>
+  </div>
+
+  <span class="spacer"></span>
+
+  <mat-button-toggle-group [ngModel]="store.viewMode()" (ngModelChange)="onViewMode($event)"
+                           hideSingleSelectionIndicator class="view-toggle" aria-label="View mode">
+    <mat-button-toggle value="table">
+      <mat-icon>table_rows</mat-icon> Table
+    </mat-button-toggle>
+    <mat-button-toggle value="gallery">
+      <mat-icon>grid_view</mat-icon> Gallery
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+</div>

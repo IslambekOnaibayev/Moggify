@@ -1,0 +1,92 @@
+:host {
+  display: block;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.topnav {
+  display: flex;
+  align-items: center;
+  height: 60px;
+  padding: 0 24px;
+  background: var(--moggify-surface);
+  border-bottom: 1px solid var(--moggify-border);
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+
+    .brand-logo {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: block;
+    }
+    .brand-name {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+  }
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 14px 24px;
+  background: var(--moggify-surface);
+  border-bottom: 1px solid var(--moggify-border);
+  flex-wrap: wrap;
+}
+
+.field { display: flex; flex-direction: column; }
+.lang  { min-width: 170px; }
+.seed  { min-width: 200px; }
+
+.likes {
+  min-width: 240px;
+  flex: 1;
+  max-width: 340px;
+  justify-content: center;
+
+  .likes-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: -2px;
+  }
+  .likes-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--moggify-text-muted);
+  }
+  .likes-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--moggify-red);
+  }
+  .likes-slider { width: 100%; }
+}
+
+.spacer { flex: 1 1 auto; }
+
+.view-toggle {
+  --mat-standard-button-toggle-selected-state-background-color: var(--moggify-red);
+  --mat-standard-button-toggle-selected-state-text-color: #fff;
+
+  mat-icon {
+    margin-right: 4px;
+    vertical-align: middle;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}

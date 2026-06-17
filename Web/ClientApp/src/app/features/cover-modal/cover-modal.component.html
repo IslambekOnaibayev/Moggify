@@ -1,0 +1,5 @@
+@if (modal.url(); as url) {
+  <div class="cover-modal" (click)="modal.close()">
+    <img [src]="url" alt="cover" class="cover-large" (click)="modal.close()" />
+  </div>
+}

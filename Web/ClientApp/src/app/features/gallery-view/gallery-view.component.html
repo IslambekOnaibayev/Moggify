@@ -1,0 +1,49 @@
+<div class="gallery" [class.has-panel]="selectedIndex !== null">
+  <div class="grid-area">
+    <div class="grid">
+      @for (song of songs; track song.index) {
+        <mat-card class="song-card" appearance="filled"
+                  [class.selected]="isSelected(song)" (click)="select(song)">
+          <div class="cover-box">
+            <img [src]="coverUrl(seed(), song.index, song.title, song.artist)"
+                 [alt]="song.title" class="cover" (click)="openCover(song, $event)" />
+            <button class="play-overlay" [class.active]="isPlaying(song)"
+                    (click)="playSong(song, $event)"
+                    [attr.aria-label]="isPlaying(song) ? 'Pause' : 'Play'">
+              <mat-icon>{{ isPlaying(song) ? 'pause' : 'play_arrow' }}</mat-icon>
+            </button>
+          </div>
+          <div class="info">
+            <p class="title">{{ song.title }}</p>
+            <p class="artist">{{ song.artist }}</p>
+            <div class="foot">
+              <span class="genre">{{ song.genre }}</span>
+              <button class="likes" [class.liked]="displayLikes(song) > 0"
+                      (click)="like(song, $event)" aria-label="Like">
+                <mat-icon>favorite</mat-icon>{{ displayLikes(song) }}
+              </button>
+            </div>
+          </div>
+        </mat-card>
+      }
+    </div>
+
+    @if (loading) {
+      <div class="loader"><mat-spinner diameter="36"></mat-spinner></div>
+    }
+    @if (!loading && !hasMore && songs.length > 0) {
+      <div class="end">— End of catalog —</div>
+    }
+  </div>
+
+  @if (selectedIndex !== null) {
+    <aside class="detail-panel">
+      @if (detailsLoading) {
+        <div class="panel-loader"><mat-spinner diameter="34"></mat-spinner></div>
+      }
+      @if (!detailsLoading && selectedDetails) {
+        <app-song-detail [details]="selectedDetails" [compact]="true" />
+      }
+    </aside>
+  }
+</div>
