@@ -85,7 +85,7 @@ namespace Infrastructure.AudioGeneration
             const int beatsPerBar = 4;
             var secondsPerBar = beatsPerBar * secondsPerBeat;
 
-            var targetSeconds = 120 + rng.Next(0, 121);
+            var targetSeconds = 60 + rng.Next(0, 61);
             var bars = Math.Max(16, (int)Math.Round(targetSeconds / secondsPerBar));
 
             var song = new ComposedSong

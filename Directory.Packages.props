@@ -10,7 +10,7 @@
     <PackageVersion Include="Ardalis.Specification.EntityFrameworkCore" Version="9.3.1" />
     <PackageVersion Include="AspNetCore.Localizer.Json" Version="1.0.4" />
     <PackageVersion Include="Bogus" Version="35.6.1" />
-    <PackageVersion Include="Concentus" Version="1.1.7" />
+    <PackageVersion Include="Concentus" Version="2.2.2" />
     <PackageVersion Include="Concentus.OggFile" Version="1.0.7" />
     <PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="9.0.0" />
     <PackageVersion Include="coverlet.collector" Version="10.0.0" />

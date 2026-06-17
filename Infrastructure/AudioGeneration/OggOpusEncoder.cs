@@ -1,5 +1,6 @@
 using Concentus;
-using Concentus.OggFile;
+using Concentus.Enums;
+using Concentus.Oggfile;
 
 namespace Infrastructure.AudioGeneration
 {
@@ -9,7 +10,7 @@ namespace Infrastructure.AudioGeneration
 
         public static byte[] Encode(float[] samples, int sampleRate)
         {
-            var encoder = OpusEncoder.Create(sampleRate, 1, OpusApplication.OPUS_APPLICATION_AUDIO);
+            var encoder = OpusCodecFactory.CreateEncoder(sampleRate, 1, OpusApplication.OPUS_APPLICATION_AUDIO);
             encoder.Bitrate = Bitrate;
 
             var shorts = new short[samples.Length];
@@ -20,7 +21,7 @@ namespace Infrastructure.AudioGeneration
             }
 
             using var ms = new MemoryStream();
-            using var writer = new OpusOggWriteStream(encoder, ms, null, sampleRate, 1);
+            var writer = new OpusOggWriteStream(encoder, ms, null, sampleRate, 1);
             writer.WriteSamples(shorts, 0, shorts.Length);
             writer.Finish();
 
