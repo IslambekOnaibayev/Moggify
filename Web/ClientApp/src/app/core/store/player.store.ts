@@ -30,6 +30,7 @@ export class PlayerStore {
   private audio: HTMLAudioElement | null = null;
   private raf = 0;
   private fadeTimer: ReturnType<typeof setInterval> | null = null;
+  private resolvingDuration = false;
 
   readonly hasTrack = computed(() => this.currentIndex() !== null);
   readonly coverUrl = computed(() => {
@@ -82,9 +83,10 @@ export class PlayerStore {
     a.loop = this.isRepeating();
     a.volume = 0;
     a.addEventListener('canplay', () => this.isLoading.set(false));
-    a.addEventListener('loadedmetadata', () => this.duration.set(a.duration || 0));
-    a.addEventListener('durationchange', () => this.duration.set(a.duration || 0));
+    a.addEventListener('loadedmetadata', () => this.applyDuration(a));
+    a.addEventListener('durationchange', () => this.applyDuration(a));
     a.addEventListener('ended', () => {
+      if (this.resolvingDuration) return;
       this.stopLoop();
       if (this.isRepeating()) return;
       if (this.autoPlay()) this.next();
@@ -144,6 +146,27 @@ export class PlayerStore {
     this.progress.set(seconds);
   }
 
+  private applyDuration(a: HTMLAudioElement): void {
+    const d = a.duration;
+    if (isFinite(d) && d > 0) this.duration.set(d);
+    else if (!this.resolvingDuration) this.resolveDurationViaSeek(a);
+  }
+
+  // Ogg/Opus streams report duration === Infinity until the final page is read.
+  // Seeking past the end forces the browser to resolve the real duration.
+  private resolveDurationViaSeek(a: HTMLAudioElement): void {
+    this.resolvingDuration = true;
+    const onUpdate = () => {
+      if (!isFinite(a.duration) || a.duration <= 0) return;
+      a.removeEventListener('timeupdate', onUpdate);
+      this.resolvingDuration = false;
+      this.duration.set(a.duration);
+      a.currentTime = 0;
+    };
+    a.addEventListener('timeupdate', onUpdate);
+    a.currentTime = 1e101;
+  }
+
   setVolume(v: number): void {
     this.volume.set(v);
     if (this.audio && this.fadeTimer === null) this.audio.volume = v;
@@ -168,8 +191,9 @@ export class PlayerStore {
     cancelAnimationFrame(this.raf);
     const tick = () => {
       if (!this.audio) return;
-      this.progress.set(this.audio.currentTime);
-      if (this.audio.duration) this.duration.set(this.audio.duration);
+      if (!this.resolvingDuration) this.progress.set(this.audio.currentTime);
+      const d = this.audio.duration;
+      if (isFinite(d) && d > 0) this.duration.set(d);
       if (this.isPlaying()) this.raf = requestAnimationFrame(tick);
     };
     this.raf = requestAnimationFrame(tick);
@@ -199,6 +223,7 @@ export class PlayerStore {
 
   private teardown(): void {
     this.stopLoop();
+    this.resolvingDuration = false;
     if (this.fadeTimer !== null) { clearInterval(this.fadeTimer); this.fadeTimer = null; }
     if (this.audio) {
       this.audio.pause();

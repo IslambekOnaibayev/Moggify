@@ -57,7 +57,7 @@
       </th>
       <td mat-cell *matCellDef="let song" class="col-likes">
         <button class="like-btn" [class.liked]="displayLikes(song) > 0"
-                (click)="like(song, $event)" matTooltip="Like (+1)">
+                (click)="like(song, $event)" matTooltip="Like">
           <mat-icon>favorite</mat-icon>{{ displayLikes(song) }}
         </button>
       </td>

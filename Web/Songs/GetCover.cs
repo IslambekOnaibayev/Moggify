@@ -35,7 +35,7 @@ namespace Web.Songs
 
             HttpContext.Response.Headers.CacheControl = "public, max-age=86400";
             HttpContext.Response.Headers.ETag = $"\"{seed}-{index}-{likes}-{locale}\"";
-            HttpContext.Response.ContentType = "image/png";
+            HttpContext.Response.ContentType = "image/webp";
             await HttpContext.Response.Body.WriteAsync(result.Value, ct);
         }
     }

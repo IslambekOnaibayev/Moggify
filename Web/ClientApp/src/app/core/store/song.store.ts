@@ -72,9 +72,9 @@ export class SongStore {
   }
 
   likeSong(index: number, baseLikes: number): void {
-    const added = this.userLikes()[index] ?? 0;
-    if (baseLikes + added >= 10) return;
-    this.userLikes.update(m => ({ ...m, [index]: added + 1 }));
+    const liked = (this.userLikes()[index] ?? 0) > 0;
+    if (!liked && baseLikes >= 10) return;
+    this.userLikes.update(m => ({ ...m, [index]: liked ? 0 : 1 }));
   }
 
   displayLikes(index: number, baseLikes: number): number {

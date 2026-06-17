@@ -18,7 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Fonts\*.ttf" />
     <EmbeddedResource Include="SongData\*.json" />
   </ItemGroup>
 

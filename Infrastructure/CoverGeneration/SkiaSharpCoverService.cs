@@ -7,24 +7,8 @@ namespace Infrastructure.CoverGeneration
         private const int Size = 400;
         private const int RenderScale = 2;
         private const int RenderSize = Size * RenderScale;
-        private static readonly SKTypeface _typeface;
-
-        static SkiaSharpCoverService()
-        {
-            var assembly = typeof(SkiaSharpCoverService).Assembly;
-            var fontResource = assembly.GetManifestResourceNames()
-                .FirstOrDefault(n => n.EndsWith(".ttf"));
-
-            if (fontResource != null)
-            {
-                using var stream = assembly.GetManifestResourceStream(fontResource)!;
-                _typeface = SKTypeface.FromStream(stream) ?? SKTypeface.Default;
-            }
-            else
-            {
-                _typeface = SKTypeface.Default;
-            }
-        }
+        private const int OutputSize = 640;
+        private const int WebpQuality = 90;
 
         public byte[] GenerateCover(long userSeed, int globalIndex, double likesAvg, string locale, string title, string artist)
         {
@@ -98,11 +82,12 @@ namespace Infrastructure.CoverGeneration
             }
 
             DrawVignette(canvas);
-            DrawBottomScrim(canvas);
-            DrawText(canvas, title, artist);
 
-            using var image = SKImage.FromBitmap(bitmap);
-            using var data = image.Encode(SKEncodedImageFormat.Png, 95);
+            using var resized = bitmap.Resize(
+                new SKImageInfo(OutputSize, OutputSize), SKFilterQuality.High);
+            using var pixmap = (resized ?? bitmap).PeekPixels();
+            using var data = pixmap.Encode(
+                new SKWebpEncoderOptions(SKWebpEncoderCompression.Lossy, WebpQuality));
             return data.ToArray();
         }
 
@@ -2390,105 +2375,6 @@ namespace Infrastructure.CoverGeneration
                     new SKPoint(Size / 2f, Size / 2f), Size * 0.78f, colors, null, SKShaderTileMode.Clamp)
             };
             canvas.DrawRect(0, 0, Size, Size, paint);
-        }
-
-        private static void DrawBottomScrim(SKCanvas canvas)
-        {
-            using var paint = new SKPaint
-            {
-                Shader = SKShader.CreateLinearGradient(
-                    new SKPoint(0, Size * 0.55f), new SKPoint(0, Size),
-                    [new SKColor(0, 0, 0, 0), new SKColor(0, 0, 0, 190)],
-                    null, SKShaderTileMode.Clamp)
-            };
-            canvas.DrawRect(0, Size * 0.55f, Size, Size * 0.45f, paint);
-        }
-
-        private static void DrawText(SKCanvas canvas, string title, string artist)
-        {
-            const float padding = 20f;
-            const float maxWidth = Size - padding * 2;
-
-            var artistFontSize = 22f;
-            var titleFontSize = CalculateTitleFontSize(title);
-
-            using var shadowPaint = new SKPaint
-            {
-                IsAntialias = true,
-                Color = new SKColor(0, 0, 0, 180),
-                Typeface = _typeface,
-                TextSize = titleFontSize,
-                IsLinearText = true
-            };
-
-            using var titlePaint = new SKPaint
-            {
-                IsAntialias = true,
-                Color = SKColors.White,
-                Typeface = _typeface,
-                TextSize = titleFontSize,
-                IsLinearText = true,
-                FakeBoldText = true
-            };
-
-            using var artistPaint = new SKPaint
-            {
-                IsAntialias = true,
-                Color = new SKColor(255, 255, 255, 210),
-                Typeface = _typeface,
-                TextSize = artistFontSize,
-                IsLinearText = true
-            };
-
-            var titleLines = WrapText(title, titlePaint, maxWidth);
-            var titleBlockHeight = titleLines.Count * (titleFontSize * 1.2f);
-            var artistY = Size - padding - 10;
-            var titleY = artistY - artistFontSize - 12 - titleBlockHeight;
-
-            foreach (var line in titleLines)
-            {
-                canvas.DrawText(line, padding + 2, titleY + 2, shadowPaint);
-                canvas.DrawText(line, padding, titleY, titlePaint);
-                titleY += titleFontSize * 1.2f;
-            }
-
-            canvas.DrawText(artist, padding + 1, artistY + 1, shadowPaint);
-            canvas.DrawText(artist, padding, artistY, artistPaint);
-        }
-
-        private static float CalculateTitleFontSize(string title)
-        {
-            return title.Length switch
-            {
-                <= 10 => 42f,
-                <= 20 => 34f,
-                <= 30 => 28f,
-                _ => 22f
-            };
-        }
-
-        private static List<string> WrapText(string text, SKPaint paint, float maxWidth)
-        {
-            var lines = new List<string>();
-            var words = text.Split(' ');
-            var current = "";
-
-            foreach (var word in words)
-            {
-                var candidate = current.Length == 0 ? word : current + " " + word;
-                if (paint.MeasureText(candidate) > maxWidth && current.Length > 0)
-                {
-                    lines.Add(current);
-                    current = word;
-                }
-                else
-                {
-                    current = candidate;
-                }
-            }
-
-            if (current.Length > 0) lines.Add(current);
-            return lines;
         }
 
         private static SKColor[] GeneratePalette(Random rng)
