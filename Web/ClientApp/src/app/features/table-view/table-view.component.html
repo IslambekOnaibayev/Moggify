@@ -65,18 +65,19 @@
 
     <ng-container matColumnDef="detail">
       <td mat-cell *matCellDef="let song" [attr.colspan]="columns.length" class="detail-cell">
-        <div class="detail-inner"
-             [@detailExpand]="isExpanded(song) ? 'expanded' : 'collapsed'">
-          @if (isExpanded(song)) {
-            @if (detailsLoading) {
-              <div class="detail-spinner">
-                <mat-spinner diameter="36"></mat-spinner>
-              </div>
+        <div class="detail-inner" [class.open]="isExpanded(song)">
+          <div class="detail-content">
+            @if (hasDetailContent(song)) {
+              @if (detailsLoading) {
+                <div class="detail-spinner">
+                  <mat-spinner diameter="36"></mat-spinner>
+                </div>
+              }
+              @if (!detailsLoading && expandedDetails) {
+                <app-song-detail [details]="expandedDetails" />
+              }
             }
-            @if (!detailsLoading && expandedDetails) {
-              <app-song-detail [details]="expandedDetails" />
-            }
-          }
+          </div>
         </div>
       </td>
     </ng-container>

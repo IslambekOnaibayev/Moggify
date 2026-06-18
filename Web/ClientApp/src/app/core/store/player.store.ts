@@ -126,7 +126,10 @@ export class PlayerStore {
     this.duration.set(0);
   }
 
-  next(): void { this.step(1); }
+  next(): void {
+    if (this.isShuffled()) this.shuffleNext();
+    else this.step(1);
+  }
   previous(): void { this.step(-1); }
 
   private step(delta: number): void {
@@ -134,6 +137,21 @@ export class PlayerStore {
     if (idx === null) return;
     const target = Math.max(1, idx + delta);
     if (target === idx) return;
+    this.goToIndex(target);
+  }
+
+  // Pick a random track (other than the current one) from the loaded pool, so
+  // shuffle stays responsive — those tracks are already preloaded/cached.
+  private shuffleNext(): void {
+    const idx = this.currentIndex();
+    if (idx === null) return;
+    const pool = this.songStore.loadedIndices().filter(i => i !== idx);
+    if (pool.length === 0) { this.step(1); return; }
+    const target = pool[Math.floor(Math.random() * pool.length)];
+    this.goToIndex(target);
+  }
+
+  private goToIndex(target: number): void {
     const seed = this.currentSeed();
     this.api
       .getSongDetails(target, this.songStore.locale(), seed, this.songStore.likesAvg())

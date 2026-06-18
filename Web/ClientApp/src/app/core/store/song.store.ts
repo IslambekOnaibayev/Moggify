@@ -1,4 +1,4 @@
-import { Injectable, signal, inject } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import { Song, SongDetails, ViewMode } from '../models/song.model';
 import { SongApiService } from '../../infrastructure/api/song-api.service';
 import { AudioPreloadService } from '../services/audio-preload.service';
@@ -26,12 +26,24 @@ export class SongStore {
   private galleryBatch = 0;
 
   readonly expandedIndex = signal<number | null>(null);
+  // Row whose detail content is mounted. Lags behind expandedIndex on collapse so
+  // the closing row keeps its content while the height transition plays out.
+  readonly detailRowIndex = signal<number | null>(null);
   readonly expandedDetails = signal<SongDetails | null>(null);
   readonly detailsLoading = signal<boolean>(false);
 
   readonly userLikes = signal<Record<number, number>>({});
 
+  // Indices currently loaded (table + gallery) — the pool shuffle picks from.
+  readonly loadedIndices = computed<number[]>(() => {
+    const set = new Set<number>();
+    for (const s of this.tableSongs()) set.add(s.index);
+    for (const s of this.gallerySongs()) set.add(s.index);
+    return [...set];
+  });
+
   private reloadTimer: ReturnType<typeof setTimeout> | null = null;
+  private collapseTimer: ReturnType<typeof setTimeout> | null = null;
   private tableReqId = 0;
 
   constructor() {
@@ -83,8 +95,7 @@ export class SongStore {
 
   goToPage(page: number): void {
     this.currentPage.set(page);
-    this.expandedIndex.set(null);
-    this.expandedDetails.set(null);
+    this.clearExpansion();
     this.fetchTablePage(this.locale(), this.seed(), page);
   }
 
@@ -114,12 +125,32 @@ export class SongStore {
 
   toggleExpand(index: number): void {
     if (this.expandedIndex() === index) {
-      this.expandedIndex.set(null);
-      this.expandedDetails.set(null);
+      this.collapseExpanded();
       return;
     }
+    if (this.collapseTimer !== null) { clearTimeout(this.collapseTimer); this.collapseTimer = null; }
     this.expandedIndex.set(index);
+    this.detailRowIndex.set(index);
     this.loadDetails(index);
+  }
+
+  // Collapse the open row but keep its content mounted for the duration of the
+  // CSS height transition, so closing animates instead of snapping shut.
+  private collapseExpanded(): void {
+    this.expandedIndex.set(null);
+    if (this.collapseTimer !== null) clearTimeout(this.collapseTimer);
+    this.collapseTimer = setTimeout(() => {
+      this.collapseTimer = null;
+      this.detailRowIndex.set(null);
+      this.expandedDetails.set(null);
+    }, 260);
+  }
+
+  private clearExpansion(): void {
+    if (this.collapseTimer !== null) { clearTimeout(this.collapseTimer); this.collapseTimer = null; }
+    this.expandedIndex.set(null);
+    this.detailRowIndex.set(null);
+    this.expandedDetails.set(null);
   }
 
   revealSong(index: number): void {
@@ -129,14 +160,15 @@ export class SongStore {
       this.fetchTablePage(this.locale(), this.seed(), page);
     }
     if (this.expandedIndex() === index) return;
+    if (this.collapseTimer !== null) { clearTimeout(this.collapseTimer); this.collapseTimer = null; }
     this.expandedIndex.set(index);
+    this.detailRowIndex.set(index);
     this.loadDetails(index);
   }
 
   private resetAndReload(): void {
     this.currentPage.set(1);
-    this.expandedIndex.set(null);
-    this.expandedDetails.set(null);
+    this.clearExpansion();
     this.userLikes.set({});
     this.gallerySongs.set([]);
     this.galleryBatch = 0;
@@ -147,8 +179,7 @@ export class SongStore {
 
   private reloadForLikes(): void {
     this.userLikes.set({});
-    this.expandedIndex.set(null);
-    this.expandedDetails.set(null);
+    this.clearExpansion();
     this.fetchTablePage(this.locale(), this.seed(), this.currentPage());
     if (this.viewMode() === 'gallery') {
       this.gallerySongs.set([]);

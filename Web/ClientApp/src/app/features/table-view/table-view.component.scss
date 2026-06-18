@@ -144,7 +144,21 @@
 .detail-row .mat-mdc-cell { border-bottom: none; padding: 0; }
 
 .detail-cell { padding: 0 !important; }
-.detail-inner { overflow: hidden; }
+
+// Smooth open/close via grid-template-rows (0fr -> 1fr) — animates height:auto
+// reliably and without depending on the Angular animations engine.
+.detail-inner {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 260ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  &.open { grid-template-rows: 1fr; }
+}
+.detail-content { overflow: hidden; min-height: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .detail-inner { transition: none; }
+}
 
 .detail-spinner {
   display: flex;

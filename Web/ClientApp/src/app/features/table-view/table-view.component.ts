@@ -1,5 +1,4 @@
 import { Component, inject } from '@angular/core';
-import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,13 +19,6 @@ import { SongDetailComponent } from '../song-detail/song-detail.component';
   ],
   templateUrl: './table-view.component.html',
   styleUrl: './table-view.component.scss',
-  animations: [
-    trigger('detailExpand', [
-      state('collapsed', style({ height: '0px', minHeight: '0', opacity: 0 })),
-      state('expanded', style({ height: '*', opacity: 1 })),
-      transition('expanded <=> collapsed', animate('250ms cubic-bezier(0.4, 0, 0.2, 1)')),
-    ]),
-  ],
 })
 export class TableViewComponent {
   store = inject(SongStore);
@@ -42,6 +34,8 @@ export class TableViewComponent {
   get detailsLoading() { return this.store.detailsLoading(); }
 
   isExpanded(song: Song) { return this.expandedIndex === song.index; }
+  // True while the row's detail content should stay mounted (covers the closing transition).
+  hasDetailContent(song: Song) { return this.store.detailRowIndex() === song.index; }
   toggle(song: Song) { this.store.toggleExpand(song.index); }
 
   isPlaying(song: Song) {
