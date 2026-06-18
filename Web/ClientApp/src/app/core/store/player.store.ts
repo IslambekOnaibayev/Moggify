@@ -140,8 +140,6 @@ export class PlayerStore {
     this.goToIndex(target);
   }
 
-  // Pick a random track (other than the current one) from the loaded pool, so
-  // shuffle stays responsive — those tracks are already preloaded/cached.
   private shuffleNext(): void {
     const idx = this.currentIndex();
     if (idx === null) return;
@@ -170,8 +168,6 @@ export class PlayerStore {
     else if (!this.resolvingDuration) this.resolveDurationViaSeek(a);
   }
 
-  // Ogg/Opus streams report duration === Infinity until the final page is read.
-  // Seeking past the end forces the browser to resolve the real duration.
   private resolveDurationViaSeek(a: HTMLAudioElement): void {
     this.resolvingDuration = true;
     const onUpdate = () => {

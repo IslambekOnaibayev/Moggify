@@ -34,7 +34,6 @@ export class TableViewComponent {
   get detailsLoading() { return this.store.detailsLoading(); }
 
   isExpanded(song: Song) { return this.expandedIndex === song.index; }
-  // True while the row's detail content should stay mounted (covers the closing transition).
   hasDetailContent(song: Song) { return this.store.detailRowIndex() === song.index; }
   toggle(song: Song) { this.store.toggleExpand(song.index); }
 

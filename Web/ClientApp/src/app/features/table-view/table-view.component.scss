@@ -145,8 +145,6 @@
 
 .detail-cell { padding: 0 !important; }
 
-// Smooth open/close via grid-template-rows (0fr -> 1fr) — animates height:auto
-// reliably and without depending on the Angular animations engine.
 .detail-inner {
   display: grid;
   grid-template-rows: 0fr;

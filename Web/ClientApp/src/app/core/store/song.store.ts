@@ -26,15 +26,12 @@ export class SongStore {
   private galleryBatch = 0;
 
   readonly expandedIndex = signal<number | null>(null);
-  // Row whose detail content is mounted. Lags behind expandedIndex on collapse so
-  // the closing row keeps its content while the height transition plays out.
   readonly detailRowIndex = signal<number | null>(null);
   readonly expandedDetails = signal<SongDetails | null>(null);
   readonly detailsLoading = signal<boolean>(false);
 
   readonly userLikes = signal<Record<number, number>>({});
 
-  // Indices currently loaded (table + gallery) — the pool shuffle picks from.
   readonly loadedIndices = computed<number[]>(() => {
     const set = new Set<number>();
     for (const s of this.tableSongs()) set.add(s.index);
@@ -134,8 +131,6 @@ export class SongStore {
     this.loadDetails(index);
   }
 
-  // Collapse the open row but keep its content mounted for the duration of the
-  // CSS height transition, so closing animates instead of snapping shut.
   private collapseExpanded(): void {
     this.expandedIndex.set(null);
     if (this.collapseTimer !== null) clearTimeout(this.collapseTimer);

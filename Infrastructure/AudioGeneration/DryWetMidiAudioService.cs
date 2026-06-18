@@ -10,11 +10,6 @@ namespace Infrastructure.AudioGeneration
 
         public DryWetMidiAudioService(IMemoryCache cache) => _cache = cache;
 
-        // Rendering + Opus encoding a 40-60s track costs several CPU-seconds. On a
-        // throttled host the response can exceed the gateway timeout and get cut off,
-        // so the player receives a truncated clip. Each track is deterministic for a
-        // given (seed, index), so we render it once and serve the cached bytes for
-        // every later request (including range/seek requests from the audio element).
         public byte[] GenerateAudio(long userSeed, int globalIndex)
         {
             var key = (userSeed, globalIndex);
