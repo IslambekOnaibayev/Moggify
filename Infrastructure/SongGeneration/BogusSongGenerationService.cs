@@ -126,9 +126,7 @@ namespace Infrastructure.SongGeneration
 
             AddVerse(0, 4);
             AddVerse(4, 4);
-            AddVerse(8, 4);
-            AddVerse(12, 4);
-            AddVerse(16, 5);
+            AddVerse(8, 5);
 
             return sb.ToString().Trim();
         }

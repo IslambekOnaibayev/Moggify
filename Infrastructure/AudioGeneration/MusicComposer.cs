@@ -3,7 +3,7 @@ namespace Infrastructure.AudioGeneration
     internal sealed class ComposedSong
     {
         public int TempoMicrosPerBeat { get; init; }
-        public int SampleRate { get; init; } = 24000;
+        public int SampleRate { get; init; } = 16000;
         public List<NoteEvent> Notes { get; init; } = [];
     }
 

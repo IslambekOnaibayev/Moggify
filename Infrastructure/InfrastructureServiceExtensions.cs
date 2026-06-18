@@ -13,6 +13,8 @@ namespace Infrastructure
             ILogger logger,
             string environmentName)
         {
+            services.AddMemoryCache();
+
             services.AddSingleton<ISongGenerationService, BogusSongGenerationService>();
             services.AddSingleton<ISongAudioService, DryWetMidiAudioService>();
             services.AddSingleton<ISongCoverService, SkiaSharpCoverService>();
